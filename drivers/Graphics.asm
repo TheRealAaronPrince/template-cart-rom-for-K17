@@ -25,7 +25,103 @@ CopyCharLoop$
 	lda PORTB
 	and #0b00000111
 	bne CopyCharLoop$
-	jmp EndDraw
+	rts
+;----------------------------------------------------------------
+LoadCustomChars:
+	tsx
+	lda	$0101,x
+	sta	ptr1
+	lda	$0102,x
+	sta	ptr1+1
+	ldy	#$01
+	lda	(ptr1),y
+	sta ptr2
+	iny
+	lda	(ptr1),y
+	sta ptr2+1
+	tya
+	clc
+	adc	ptr1
+	sta	$0101,x
+	lda #$00
+	adc	ptr1+1
+	sta	$0102,x
+;---
+	ldy #$00
+	lda (ptr2),y
+	sta OPP1
+	inc ptr2
+	bcc nocarry1$
+	inc ptr2+1
+nocarry1$
+	lda (ptr2),y
+	sta OPP2
+	inc ptr2
+	bcc nocarry2$
+	inc ptr2+1
+nocarry2$
+	lda OPP2
+	sec
+	sbc #$01
+	lsr
+	lsr
+	lsr
+	lsr
+	lsr
+	sta SCTH+1
+	lda OPP1
+	lsr
+	lsr
+	lsr
+	lsr
+	lsr
+	clc
+	adc #$90
+	sta PORTB
+	lda OPP2
+	asl
+	asl
+	asl
+	sta SCTH+2
+	lda OPP1
+	asl
+	asl
+	asl
+	sta SCTH
+CopyCharLoop$
+	lda (ptr2),y
+	sta CDAT
+	tya
+	clc
+	adc SCTH
+	tay
+	lda CDAT
+	sta (Video),y
+	tya
+	clc
+	cmp SCTH+2
+	bne continue$
+	lda PORTB
+	and #0b00000111
+	cmp SCTH+1
+	beq end$
+continue$
+	tya
+	cmp #$FF
+	bne NoPtrInc$
+	inc PORTB
+NoPtrInc$
+	sec
+	sbc SCTH
+	tay
+	iny
+	bne CopyCharLoop$
+	inc ptr2+1
+	lda PORTB
+	and #0b00000111
+	bne CopyCharLoop$
+end$
+	rts
 ;----------------------------------------------------------------
 ;----------------------------------------------------------------
 CharCalc: ;calculate page and byte address of the character from X and Y
