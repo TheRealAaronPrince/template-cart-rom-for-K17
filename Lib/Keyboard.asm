@@ -152,4 +152,4 @@ MKeyEnd
 	rts
 
 CharTable:
-	.binary drivers\charTable.bin
+	.binary Lib\charTable.bin
