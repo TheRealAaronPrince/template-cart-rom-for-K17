@@ -4,7 +4,7 @@ EndDraw:
 	rts
 ;----------------------------------------------------------------
 ;----------------------------------------------------------------
-LoadDefaultCharset
+LoadDefaultCharset:
 	ldy #$00
 	lda #$90
 	sta PORTB
@@ -314,9 +314,7 @@ ImgRect:		;copy glyph and color data from memory to screen.
 loopY$
 	lda SHX1
 	sta CHRX
-	pha
 	jsr CharCalc
-	pla
 	lda SHY2
 	cmp CHRY
 	bne loopX$
@@ -327,14 +325,8 @@ loopX$
 	sta SYMB
 	lda (SC2L,X)
 	sta COLR
-	pha
-	tya
-	pha
 	jsr DrawTile
 	jsr CharInc
-	pla
-	tay
-	pla
 	inc SRCL
 	bne NoCarry1$
 	inc SRCH
