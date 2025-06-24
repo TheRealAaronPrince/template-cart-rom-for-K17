@@ -82,6 +82,8 @@ nocarry2$
 	asl
 	asl
 	asl
+	sec
+	sbc #$01
 	sta SCTH+2
 	lda OPP1
 	asl
