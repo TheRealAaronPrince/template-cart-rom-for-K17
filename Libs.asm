@@ -1,2 +1,2 @@
-	.include drivers\Graphics.asm
-	.include drivers\Keyboard.asm
+	.include Lib\Graphics.asm
+	.include Lib\Keyboard.asm
