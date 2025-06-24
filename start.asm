@@ -33,29 +33,27 @@ Location = $300
 
 ; example code
 ;----------------------------------------------------------------
-	jsr ClearScreen
-	lda #0
-	sta CHRX
-	lda #0
-	sta CHRY
 	lda #$F0
-	sta COLR
+	sta COLR	;set text color.
+	jsr ClearScreen		;fill screen with space characters
+	jsr LoadCustomChars
+	.word ExampleTiles
+	lda #0
+	sta CHRX	;set text X start pos to 0
+	lda #0
+	sta CHRY	;set text Y start pos to 0
 	jsr PrintStr
-	.string "Hello, world!"
+	.string "Sphinx of black quartz, judge my vow."
 	jsr EndDraw
 HaltLoop:
 	jmp HaltLoop
 ;----------------------------------------------------------------
 
-
-
 	.include KbdKeyVals.asm
 	.include definitions.asm
 	.include Libs.asm
-; -----------------------------------
-; ------= Vector Definitions =-------
-; -----------------------------------
-	.ORG	$FFFA
-	.word	reset ; NMI
-	.word	reset ; RESET
-	.word	reset ; IRQ
+
+;----------------------------------------------------------------
+
+ExampleTiles:
+	.binary custom-font.bin
