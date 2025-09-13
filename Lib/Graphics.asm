@@ -6,7 +6,7 @@ EndDraw:
 ;----------------------------------------------------------------
 LoadDefaultCharset:
 	ldy #$00
-	lda #$90
+	lda #$50
 	sta PORTB
 CopyCharLoop$
 	lda PORTB
@@ -76,7 +76,7 @@ nocarry2$
 	lsr
 	lsr
 	clc
-	adc #$90
+	adc #$50
 	sta PORTB
 	lda OPP2
 	asl
@@ -100,7 +100,6 @@ CopyCharLoop$
 	lda CDAT
 	sta (Video),y
 	tya
-	clc
 	cmp SCTH+2
 	bne continue$
 	lda PORTB
