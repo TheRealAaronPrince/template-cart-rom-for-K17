@@ -6,7 +6,7 @@ EndDraw:
 ;----------------------------------------------------------------
 LoadDefaultCharset:
 	ldy #$00
-	lda #$50
+	lda #$30
 	sta PORTB
 CopyCharLoop$
 	lda PORTB
@@ -76,14 +76,12 @@ nocarry2$
 	lsr
 	lsr
 	clc
-	adc #$50
+	adc #$30
 	sta PORTB
 	lda OPP2
 	asl
 	asl
 	asl
-	sec
-	sbc #$01
 	sta SCTH+2
 	lda OPP1
 	asl
@@ -100,6 +98,7 @@ CopyCharLoop$
 	lda CDAT
 	sta (Video),y
 	tya
+	clc
 	cmp SCTH+2
 	bne continue$
 	lda PORTB
@@ -213,7 +212,33 @@ DrawTile:		;write color and glyph data to cell
 	rts
 ;----------------------------------------------------------------
 ;----------------------------------------------------------------
-ClearScreen: ;set up for FillRect to fill the screen with blank tiles
+ClearScreen:
+	jsr ClearText
+	jsr ClearBitmap
+	rts
+ClearBitmap: ;set all of the pixels to 0 (transparent)
+	lda #$80
+	sta PORTB
+	lda #$4B
+	tax
+	lda #$70
+	sta ptr2+1
+	lda #$00
+	sta ptr2
+	tay
+Cloop$
+	lda #$00
+	sta (ptr2),y
+	dey
+	bne Cloop$
+	clc
+	inc PORTB
+	dex
+	bne Cloop$
+	lda #$00
+	sta PORTB
+	rts
+ClearText: ;set up for FillRect to fill the screen with blank tiles
 	lda #$20
 	sta SYMB
 	lda #$00
@@ -315,7 +340,9 @@ ImgRect:		;copy glyph and color data from memory to screen.
 loopY$
 	lda SHX1
 	sta CHRX
+	pha
 	jsr CharCalc
+	pla
 	lda SHY2
 	cmp CHRY
 	bne loopX$
@@ -326,8 +353,14 @@ loopX$
 	sta SYMB
 	lda (SC2L,X)
 	sta COLR
+	pha
+	tya
+	pha
 	jsr DrawTile
 	jsr CharInc
+	pla
+	tay
+	pla
 	inc SRCL
 	bne NoCarry1$
 	inc SRCH
